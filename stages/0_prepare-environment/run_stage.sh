@@ -42,4 +42,4 @@ DBOOTSTRAP_ARGS+=" ${RELEASE} ${WORKDIR} ${MIRROR}"
 
 BOOTSTRAP_CMD="${DBOOTSTRAP_BINARY} '${DBOOTSTRAP_ARGS}'"
 
-setarch "${SETARCH_ARCHITECTURE}" capsh --drop=cap_setfcap -- -c "'${BOOTSTRAP_CMD}'"
+setarch "${SETARCH_ARCHITECTURE}" capsh --drop=cap_setfcap -- -c "${BOOTSTRAP_CMD}"
