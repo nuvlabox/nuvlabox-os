@@ -29,4 +29,8 @@ LOG_FILE="${WORKDIR}/output.log"
 
 
 # Debian release to be used
-DEBIAN_RELEASE=buster
+RELEASE=buster
+
+
+# DEBIAN mirror
+MIRROR=https://deb.debian.org/debian/

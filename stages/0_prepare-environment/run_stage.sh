@@ -15,7 +15,10 @@ SETARCH_ARCHITECTURE=${SETARCH_ARCHITECTURE:-"linux32"}
 DBOOTSTRAP_EXTRA_ARGS=${DBOOTSTRAP_EXTRA_ARGS:-""}
 
 # which Debian release to use
-DEBIAN_RELEASE=${DEBIAN_RELEASE:-"buster"}
+RELEASE=${RELEASE:-"buster"}
+
+# which Debian mirror to use
+MIRROR=${MIRROR:-"https://deb.debian.org/debian/"}
 
 # which Debian release to use
 WORKDIR=${WORKDIR}
@@ -35,7 +38,7 @@ DBOOTSTRAP_ARGS=" --arch ${ARCHITECTURE}"
 DBOOTSTRAP_ARGS+=" --components \"main,contrib,non-free\""
 #DBOOTSTRAP_ARGS+=" --keyring "${STAGE_DIR}/files/raspberrypi.gpg")
 DBOOTSTRAP_ARGS+=" ${DBOOTSTRAP_EXTRA_ARGS}"
-DBOOTSTRAP_ARGS+=" ${DEBIAN_RELEASE} ${WORKDIR}"
+DBOOTSTRAP_ARGS+=" ${RELEASE} ${WORKDIR} ${MIRROR}"
 
 BOOTSTRAP_CMD="${DBOOTSTRAP_BINARY} '${DBOOTSTRAP_ARGS}'"
 
