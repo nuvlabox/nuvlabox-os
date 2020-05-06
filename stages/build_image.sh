@@ -9,7 +9,8 @@ logger (){
 }
 export -f logger
 
-#for stage in ${STAGES}
-#do
-#  bash
-#done
+for stage in ${STAGES}
+do
+  logger "Running stage ${stage}"
+  bash "${stage}/run_stage.sh"
+done
