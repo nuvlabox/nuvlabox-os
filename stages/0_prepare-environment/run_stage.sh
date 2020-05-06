@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -x
 
 if [ "$(id -u)" != "0" ]; then
 	echo "ERROR: need to run as root!"
@@ -30,7 +30,7 @@ if [ -z "${WORKDIR}" ]; then
 fi
 
 apt-get update
-apt-get install -y debootstrap qemu-user-static
+apt-get install --no-install-recommends -y debootstrap qemu-user-static
 
 DBOOTSTRAP_BINARY=qemu-debootstrap
 
