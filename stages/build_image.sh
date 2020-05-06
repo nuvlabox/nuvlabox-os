@@ -7,7 +7,7 @@ set +a
 mkdir -p "${WORKDIR}"
 
 logger (){
-	date +"[%T] $*" | tee -a "${LOG_FILE}"
+	date +"%F %T | PID $$ | $0: $*" | tee -a "${LOG_FILE}"
 }
 export -f logger
 

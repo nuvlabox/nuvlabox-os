@@ -34,3 +34,7 @@ RELEASE=buster
 
 # DEBIAN mirror
 MIRROR=https://deb.debian.org/debian/
+
+
+# additional arguments for qemu-debootstrap if needed
+#DBOOTSTRAP_EXTRA_ARGS=""
