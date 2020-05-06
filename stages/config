@@ -1,0 +1,32 @@
+# define the image name
+IMAGE_NAME=nuvlabox-os-base
+
+
+# make sure all the necessary stages are included,
+# and ordered by execution, from first to be executed to last
+#
+# Please separate the different stages with a white space
+STAGES="0_prepare-environment"
+
+
+# select the desired architecture
+ARCHITECTURE=amd64
+
+
+# change reported architecture in new bootstraped environment
+# it needs to be compatible with:
+#
+#     setarch --list
+SETARCH_ARCHITECTURE=linux64
+
+
+# where to build the new image
+WORKDIR="$(pwd)/output/$(date +'%Y%m%d_%H%M%S')/${IMAGE_NAME}"
+
+
+# path to log file where to keep track of the build progress
+LOG_FILE="${WORKDIR}/output.log"
+
+
+# Debian release to be used
+DEBIAN_RELEASE=buster
