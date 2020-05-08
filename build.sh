@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -e
 
 EXTRA_CONFIG_FILE=${1}
 
