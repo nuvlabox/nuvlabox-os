@@ -10,8 +10,8 @@ IMAGE_NAME=nuvlabox-os-base
 # and ordered by execution, from first to be executed to last
 #
 # Please separate the different stages with a white space
-# IMPORTANT: common is mandatory for the NuvlaBox OS
-STAGE_BUNDLES="common"
+# IMPORTANT: bootstrap is mandatory for the NuvlaBox OS
+STAGE_BUNDLES="bootstrap"
 
 
 # select the desired architecture

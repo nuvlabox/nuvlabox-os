@@ -45,7 +45,9 @@ do
     if [ -f "${folder}/${stage}/run_stage.sh" ]
     then
       logger "Running stage ${stage}"
-      bash "${folder}/${stage}/run_stage.sh"
+      pushd "${folder}/${stage}"
+      bash run_stage.sh
+      popd
     else
       logger "Stage ${stage} is missing the run_stage.sh executable...skipping stage"
     fi
