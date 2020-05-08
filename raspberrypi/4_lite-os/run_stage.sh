@@ -77,7 +77,7 @@ done
 EOF
 fi
 
-
+logger "Save configurations"
 nb_chroot << EOF
 setupcon --force --save-only -v
 
