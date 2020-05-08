@@ -27,6 +27,8 @@ nb_chroot (){
 export -f nb_chroot
 ##### end of functions
 
+[ -z "${IMAGE_NAME}" ] && logger "Please define IMAGE_NAME in the configuration file" && exit 1
+export IMAGE_NAME_SUFFIX=$(date +"%s")
 
 mkdir -p "${WORKDIR}"
 

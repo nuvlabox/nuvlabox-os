@@ -11,7 +11,8 @@ IMAGE_NAME=nuvlabox-os-base
 #
 # Please separate the different stages with a white space
 # IMPORTANT: bootstrap is mandatory for the NuvlaBox OS
-STAGE_BUNDLES="bootstrap"
+# IMPORTANT: export-image is highly recommended since it is on that stage that the image file is generated
+STAGE_BUNDLES="bootstrap export-image"
 
 
 # select the desired architecture

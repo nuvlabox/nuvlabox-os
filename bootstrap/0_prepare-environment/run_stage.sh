@@ -34,7 +34,9 @@ fi
 logger "Installing package dependencies for stage ${STAGE}"
 
 apt-get update
-apt-get install --no-install-recommends -y debootstrap qemu-user-static curl quilt
+apt-get -y install --no-install-recommends git vim parted quilt coreutils qemu-user-static debootstrap \
+                                          zerofree zip dosfstools bsdtar libcap2-bin rsync grep udev xz-utils \
+                                          curl xxd file kmod bc binfmt-support ca-certificates
 
 DBOOTSTRAP_BINARY=qemu-debootstrap
 

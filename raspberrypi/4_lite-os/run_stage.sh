@@ -10,6 +10,13 @@ if [ -z "${ROOTFS}" ]; then
 	exit 1
 fi
 
+# setup keyboard configuration
+nb_chroot << EOF
+debconf-set-selections <<EOFLOCALE
+$(cat debconf/keyboard-debconf)
+EOFLOCALE
+EOF
+
 # install Lite packages
 # remove a few packages from the original Lite image in RPi-Distro/pi-gen
 logger "Install all package requirements for lite OS version"
@@ -22,14 +29,9 @@ nb_chroot <<EOF
 apt-get -o APT::Acquire::Retries=3 install --no-install-recommends -y $(echo $(cat packages/requirements.nr.apt))
 EOF
 
-# patch ld.so.preload
+# patch
 bash patches/patch_ld.so.preload.sh
-
-nb_chroot << EOF
-debconf-set-selections <<EOFLOCALE
-$(cat debconf/keyboard-debconf)
-EOFLOCALE
-EOF
+bash patches/rehash.sh
 
 logger "Set initial services, resize2fs_once, apt optimization, rc.local and others..."
 # resize disk on first boot
@@ -107,3 +109,30 @@ case "$RC" in
 esac
 popd
 
+
+##############################################
+# NETWORK TWEAKS
+##############################################
+logger "Configuring network parameters"
+install -v -d "${ROOTFS}/etc/systemd/system/dhcpcd.service.d"
+install -v -m 644 network/wait.conf "${ROOTFS}/etc/systemd/system/dhcpcd.service.d/"
+
+install -v -d "${ROOTFS}/etc/wpa_supplicant"
+install -v -m 600 network/wpa_supplicant.conf "${ROOTFS}/etc/wpa_supplicant/"
+
+# Disable wifi on 5GHz models
+mkdir -p "${ROOTFS}/var/lib/systemd/rfkill/"
+echo 1 > "${ROOTFS}/var/lib/systemd/rfkill/platform-3f300000.mmcnr:wlan"
+echo 1 > "${ROOTFS}/var/lib/systemd/rfkill/platform-fe300000.mmcnr:wlan"
+
+
+##############################################
+# TIMEZONE
+##############################################
+logger "Setting timezone"
+echo "Etc/UTC" > "${ROOTFS}/etc/timezone"
+rm "${ROOTFS}/etc/localtime"
+
+on_chroot << EOF
+dpkg-reconfigure -f noninteractive tzdata
+EOF

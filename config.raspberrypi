@@ -3,7 +3,7 @@
 #############################################
 
 IMAGE_NAME=nuvlabox-os-raspberrypi
-STAGE_BUNDLES="bootstrap raspberrypi common"
+STAGE_BUNDLES="bootstrap raspberrypi common export-image"
 ARCHITECTURE=armhf
 SETARCH_ARCHITECTURE=linux32
 RELEASE=buster
