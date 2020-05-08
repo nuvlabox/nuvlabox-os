@@ -1,9 +1,9 @@
 #!/bin/sh
 
 apt-get update
-apt-get install -y inotify-tools ntfs-3g usbmount wget jq
+apt-get install -y $(echo $(cat requirements.apt))
 
-# install docker and docker-compose 1.23+ , swarm mode
+# install docker and docker-compose 1.23+ , run in swarm mode
 
 # might defer depending on the systemd-udev installed:
 sed -i 's/PrivateMounts=yes/PrivateMounts=no/' /lib/systemd/system/systemd-udevd.service
