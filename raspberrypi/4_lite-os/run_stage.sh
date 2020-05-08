@@ -14,11 +14,12 @@ fi
 # remove a few packages from the original Lite image in RPi-Distro/pi-gen
 logger "Install all package requirements for lite OS version"
 nb_chroot <<EOF
+apt-get update
 apt-get -o APT::Acquire::Retries=3 install -y $(echo $(cat packages/requirements.apt))
 EOF
 
 nb_chroot <<EOF
-apt-get install --no-install-recommends -y $(echo $(cat packages/requirements.nr.apt))
+apt-get -o APT::Acquire::Retries=3 install --no-install-recommends -y $(echo $(cat packages/requirements.nr.apt))
 EOF
 
 # patch ld.so.preload
