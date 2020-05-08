@@ -1,3 +1,7 @@
+##################
+# BUILD SPECIFIC #
+##################
+
 # define the image name
 IMAGE_NAME=nuvlabox-os-base
 
@@ -6,7 +10,8 @@ IMAGE_NAME=nuvlabox-os-base
 # and ordered by execution, from first to be executed to last
 #
 # Please separate the different stages with a white space
-STAGES="0_prepare-environment"
+# IMPORTANT: common is mandatory for the NuvlaBox OS
+STAGE_BUNDLES="common"
 
 
 # select the desired architecture
@@ -20,14 +25,6 @@ ARCHITECTURE=amd64
 SETARCH_ARCHITECTURE=linux64
 
 
-# where to build the new image
-WORKDIR="$(pwd)/output/$(date +'%Y%m%d_%H%M%S')/${IMAGE_NAME}"
-
-
-# path to log file where to keep track of the build progress
-LOG_FILE="${WORKDIR}/output.log"
-
-
 # Debian release to be used
 RELEASE=buster
 
@@ -38,3 +35,29 @@ MIRROR=https://deb.debian.org/debian/
 
 # additional arguments for qemu-debootstrap if needed
 #DBOOTSTRAP_EXTRA_ARGS=""
+
+
+###########
+# GENERIC #
+###########
+
+# hostname for the resulting OS
+TARGET_HOSTNAME=nuvlabox-os
+
+# where to build the new image
+WORKDIR="$(pwd)/output/$(date +'%Y%m%d_%H%M%S')/${IMAGE_NAME}"
+
+
+# path to log file where to keep track of the build progress
+LOG_FILE="${WORKDIR}/output.log"
+
+
+# where to mount the new filesystem
+ROOTFS="${WORKDIR}/rootfs"
+
+
+# in development mode, a default user shall be created
+# default is 0 (false)
+#
+# default user:pass is -> sixsq:nuvlabox
+DEVELOPMENT=0

@@ -1,0 +1,12 @@
+#############################################
+# OVERWRITE THE FOLLOWING CONFIG PARAMETERS #
+#############################################
+
+IMAGE_NAME=nuvlabox-os-raspberrypi
+STAGE_BUNDLES="common raspberrypi"
+ARCHITECTURE=armhf
+SETARCH_ARCHITECTURE=linux32
+RELEASE=buster
+MIRROR=http://raspbian.raspberrypi.org/raspbian/
+DBOOTSTRAP_EXTRA_ARGS="--keyring $(pwd)/raspberrypi/raspberrypi.gpg"
+TARGET_HOSTNAME="nuvlabox-os-raspberrypi"

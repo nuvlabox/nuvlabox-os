@@ -1,4 +1,4 @@
-#!/bin/bash -x
+#!/bin/bash -ex
 
 if [ "$(id -u)" != "0" ]; then
 	echo "ERROR: need to run as root!"
@@ -20,17 +20,19 @@ RELEASE=${RELEASE:-"buster"}
 # which Debian mirror to use
 MIRROR=${MIRROR:-"https://deb.debian.org/debian/"}
 
-# which Debian release to use
-WORKDIR=${WORKDIR}
+# where to mount the Debian filesystem
+ROOTFS=${ROOTFS:-""}
 
 
-if [ -z "${WORKDIR}" ]; then
-	echo "ERROR: WORKDIR is not defined!"
+if [ -z "${ROOTFS}" ]; then
+	echo "ERROR: ROOTFS is not defined! Maybe you're missing WORKDIR from your config"
 	exit 1
 fi
 
+logger "Installing package dependencies for stage ${STAGE}"
+
 apt-get update
-apt-get install --no-install-recommends -y debootstrap qemu-user-static
+apt-get install --no-install-recommends -y debootstrap qemu-user-static curl quilt
 
 DBOOTSTRAP_BINARY=qemu-debootstrap
 
@@ -38,8 +40,16 @@ DBOOTSTRAP_ARGS=" --arch ${ARCHITECTURE}"
 DBOOTSTRAP_ARGS+=" --components \"main,contrib,non-free\""
 #DBOOTSTRAP_ARGS+=" --keyring "${STAGE_DIR}/files/raspberrypi.gpg")
 DBOOTSTRAP_ARGS+=" ${DBOOTSTRAP_EXTRA_ARGS}"
-DBOOTSTRAP_ARGS+=" ${RELEASE} ${WORKDIR} ${MIRROR}"
+DBOOTSTRAP_ARGS+=" ${RELEASE} ${ROOTFS} ${MIRROR}"
 
 DBOOTSTRAP_CMD="${DBOOTSTRAP_BINARY} ${DBOOTSTRAP_ARGS}"
 
+logger "Setting architecture ${SETARCH_ARCHITECTURE} and launching dbootstrap at ${ROOTFS}"
 setarch "${SETARCH_ARCHITECTURE}" capsh --drop=cap_setfcap -- -c "${DBOOTSTRAP_CMD}"
+
+logger "Mounting ${ROOTFS}..."
+# Mount
+mount -t proc /proc "${ROOTFS}/proc"
+mount --bind /sys "${ROOTFS}/sys"
+mount --bind /dev "${ROOTFS}/dev"
+mount --bind /dev/pts "${ROOTFS}/dev/pts"
