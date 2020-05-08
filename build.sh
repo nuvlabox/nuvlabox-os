@@ -2,6 +2,12 @@
 
 set -e
 
+trap 'catch' ERR
+catch() {
+  echo "  ERROR: could not complete installation"
+  exit 1
+}
+
 EXTRA_CONFIG_FILE=${1}
 
 set -a
