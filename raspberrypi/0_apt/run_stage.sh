@@ -1,4 +1,6 @@
-#!/bin/bash -ex
+#!/bin/bash
+
+set -e
 
 # which Debian release to use
 RELEASE=${RELEASE:-"buster"}

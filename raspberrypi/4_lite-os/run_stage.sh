@@ -1,4 +1,6 @@
-#!/bin/bash -ex
+#!/bin/bash
+
+set -e
 
 # where the Debian filesystem is mounted
 ROOTFS=${ROOTFS:-""}

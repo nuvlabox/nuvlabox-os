@@ -1,4 +1,6 @@
-#!/bin/bash -e
+#!/bin/bash
+
+set -e
 
 if [ -f "${ROOTFS}/etc/ld.so.preload" ]; then
   mv "${ROOTFS}/etc/ld.so.preload" "${ROOTFS}/etc/ld.so.preload.disabled"

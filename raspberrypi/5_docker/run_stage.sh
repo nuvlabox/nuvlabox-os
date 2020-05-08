@@ -1,4 +1,6 @@
-#!/bin/bash -ex
+#!/bin/bash
+
+set -e
 
 logger "Downloading Docker installer"
 curl -fsSL https://get.docker.com > "${ROOTFS}/tmp/install-docker.sh"

@@ -1,4 +1,6 @@
-#!/bin/bash -ex
+#!/bin/bash
+
+set -e
 
 logger "Installing locales..."
 nb_chroot <<EOF

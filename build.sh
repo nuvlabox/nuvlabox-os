@@ -1,4 +1,6 @@
-#!/bin/bash -e
+#!/bin/bash
+
+set -e
 
 EXTRA_CONFIG_FILE=${1}
 
@@ -28,7 +30,7 @@ for folder in ${STAGE_BUNDLES}
 do
   # remove trailing slash just in case
   folder=${folder%"/"}
-  logger "Running in stage bundle ${folder}"
+  logger "  ***********************  Running in stage bundle ${folder}"
 
   # check if there's an execution order for the stages, otherwise they'll be executed alphabetically
   if [ -f "${folder}/.order" ]
@@ -44,12 +46,12 @@ do
     export STAGE="${folder}/${stage}"
     if [ -f "${folder}/${stage}/run_stage.sh" ]
     then
-      logger "Running stage ${stage}"
-      pushd "${folder}/${stage}"
+      logger "  *****************  Running stage ${stage}"
+      pushd "${folder}/${stage}" > /dev/null
       bash run_stage.sh
-      popd
+      popd > /dev/null
     else
-      logger "Stage ${stage} is missing the run_stage.sh executable...skipping stage"
+      logger "  *x*x*x*x*x*x*x*x*  Stage ${stage} is missing the run_stage.sh executable...skipping stage"
     fi
   done
 done

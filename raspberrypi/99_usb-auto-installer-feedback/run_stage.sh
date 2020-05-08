@@ -1,4 +1,6 @@
-#!/bin/bash -ex
+#!/bin/bash
+
+set -e
 
 logger "Setting up NuvlaBox Engine USB Auto-installer feedback for Raspberry Pi"
 

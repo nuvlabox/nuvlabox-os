@@ -1,4 +1,6 @@
-#!/bin/bash -ex
+#!/bin/bash
+
+set -e
 
 if [ "$(id -u)" != "0" ]; then
 	echo "ERROR: need to run as root!"
