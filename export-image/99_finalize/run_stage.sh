@@ -2,9 +2,12 @@
 
 set -e
 
-!!!!!!!!!!!!!!!!!!!!
-ROOTFS = MUDOU = FINAL_ROOTFS_DIR
-!!!!!!!!!!!!!!!!!!!!
+FINAL_DIR="${WORKDIR}/image"
+FINAL_ROOTFS_DIR="${FINAL_DIR}/rootfs"
+FINAL_IMG="${FINAL_DIR}/${IMAGE_NAME}-${IMAGE_NAME_SUFFIX}.img"
+FINAL_IMG_ZIP="${FINAL_DIR}/${IMAGE_NAME}-${IMAGE_NAME_SUFFIX}.zip"
+
+ROOTFS="${FINAL_ROOTFS_DIR}"
 
 logger "Allow re-run"
 if [ ! -x "${ROOTFS}/usr/bin/qemu-arm-static" ]; then
@@ -27,11 +30,8 @@ logger "Add resolv.conf - $(cat network/resolve.conf)"
 install -m 644 network/resolv.conf "${ROOTFS}/etc/"
 
 logger "Set partuuid"
-FINAL_DIR="${WORKDIR}/image"
-FINAL_IMG="${FINAL_DIR}/${IMAGE_NAME}-${IMAGE_NAME_SUFFIX}.img"
 
 IMGID="$(dd if="${FINAL_IMG}" skip=440 bs=1 count=4 2>/dev/null | xxd -e | cut -f 2 -d' ')"
-
 BOOT_PARTUUID="${IMGID}-01"
 ROOT_PARTUUID="${IMGID}-02"
 
@@ -61,24 +61,18 @@ fi
 
 rm -f "${ROOTFS}/etc/apt/apt.conf.d/51cache"
 rm -f "${ROOTFS}/usr/bin/qemu-arm-static"
-
 rm -f "${ROOTFS}/etc/network/interfaces.dpkg-old"
-
 rm -f "${ROOTFS}/etc/apt/sources.list~"
 rm -f "${ROOTFS}/etc/apt/trusted.gpg~"
-
 rm -f "${ROOTFS}/etc/passwd-"
 rm -f "${ROOTFS}/etc/group-"
 rm -f "${ROOTFS}/etc/shadow-"
 rm -f "${ROOTFS}/etc/gshadow-"
 rm -f "${ROOTFS}/etc/subuid-"
 rm -f "${ROOTFS}/etc/subgid-"
-
 rm -f "${ROOTFS}"/var/cache/debconf/*-old
 rm -f "${ROOTFS}"/var/lib/dpkg/*-old
-
 rm -f "${ROOTFS}"/usr/share/icons/*/icon-theme.cache
-
 rm -f "${ROOTFS}/var/lib/dbus/machine-id"
 
 true > "${ROOTFS}/etc/machine-id"
@@ -96,44 +90,33 @@ install -m 644 "${ROOTFS}/etc/rpi-issue" "${ROOTFS}/boot/issue.txt"
 
 cp "${ROOTFS}/etc/rpi-issue" "$INFO_FILE"
 
-#
-#{
-#	if [ -f "${ROOTFS}/usr/share/doc/raspberrypi-kernel/changelog.Debian.gz" ]; then
-#		firmware=$(zgrep "firmware as of" \
-#			"$ROOTFS/usr/share/doc/raspberrypi-kernel/changelog.Debian.gz" | \
-#			head -n1 | sed  -n 's|.* \([^ ]*\)$|\1|p')
-#		printf "\nFirmware: https://github.com/raspberrypi/firmware/tree/%s\n" "$firmware"
-#
-#		kernel="$(curl -s -L "https://github.com/raspberrypi/firmware/raw/$firmware/extra/git_hash")"
-#		printf "Kernel: https://github.com/raspberrypi/linux/tree/%s\n" "$kernel"
-#
-#		uname="$(curl -s -L "https://github.com/raspberrypi/firmware/raw/$firmware/extra/uname_string7")"
-#		printf "Uname string: %s\n" "$uname"
-#	fi
-#
-#	printf "\nPackages:\n"
-#	dpkg -l --root "$ROOTFS_DIR"
-#} >> "$INFO_FILE"
-#
-#ROOT_DEV="$(mount | grep "${ROOTFS_DIR} " | cut -f1 -d' ')"
-#
-#unmount "${ROOTFS_DIR}"
-#zerofree "${ROOT_DEV}"
-#
-#unmount_image "${IMG_FILE}"
-#
-#mkdir -p "${DEPLOY_DIR}"
-#
-#rm -f "${DEPLOY_DIR}/${ZIP_FILENAME}${IMG_SUFFIX}.zip"
-#rm -f "${DEPLOY_DIR}/${IMG_FILENAME}${IMG_SUFFIX}.img"
-#
-#if [ "${DEPLOY_ZIP}" == "1" ]; then
-#	pushd "${STAGE_WORK_DIR}" > /dev/null
-#	zip "${DEPLOY_DIR}/${ZIP_FILENAME}${IMG_SUFFIX}.zip" \
-#		"$(basename "${IMG_FILE}")"
-#	popd > /dev/null
-#else
-#	cp "$IMG_FILE" "$DEPLOY_DIR"
-#fi
-#
-#cp "$INFO_FILE" "$DEPLOY_DIR"
+
+{
+	if [ -f "${ROOTFS}/usr/share/doc/raspberrypi-kernel/changelog.Debian.gz" ]; then
+		firmware=$(zgrep "firmware as of" \
+			"$ROOTFS/usr/share/doc/raspberrypi-kernel/changelog.Debian.gz" | \
+			head -n1 | sed  -n 's|.* \([^ ]*\)$|\1|p')
+		printf "\nFirmware: https://github.com/raspberrypi/firmware/tree/%s\n" "$firmware"
+
+		kernel="$(curl -s -L "https://github.com/raspberrypi/firmware/raw/$firmware/extra/git_hash")"
+		printf "Kernel: https://github.com/raspberrypi/linux/tree/%s\n" "$kernel"
+
+		uname="$(curl -s -L "https://github.com/raspberrypi/firmware/raw/$firmware/extra/uname_string7")"
+		printf "Uname string: %s\n" "$uname"
+	fi
+
+	printf "\nPackages:\n"
+	dpkg -l --root "$ROOTFS"
+} >> "$INFO_FILE"
+
+ROOT_DEV="$(mount | grep "${ROOTFS} " | cut -f1 -d' ')"
+
+unmount "${ROOTFS}"
+zerofree "${ROOT_DEV}"
+
+unmount_image "${FINAL_IMG}"
+
+pushd "${FINAL_DIR}" > /dev/null
+zip "${FINAL_IMG_ZIP}" "${FINAL_IMG}"
+
+popd > /dev/null
