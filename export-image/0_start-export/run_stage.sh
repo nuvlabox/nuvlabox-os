@@ -3,13 +3,9 @@
 set -xe
 
 # umount
+logger "Unmounting ${ROOTFS}"
 PARENT_DIR=$(dirname ${ROOTFS})
-while mount | grep -q "$PARENT_DIR"; do
-  LOCS=$(mount | grep "$PARENT_DIR" | cut -f 3 -d ' ' | sort -r)
-  for loc in $LOCS; do
-    umount "$loc"
-  done
-done
+unmount "${PARENT_DIR}"
 
 FINAL_DIR="${WORKDIR}/image"
 FINAL_ROOTFS_DIR="${FINAL_DIR}/rootfs"
