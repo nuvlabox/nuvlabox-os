@@ -1,6 +1,15 @@
 #!/bin/bash
 
-set -e
+set -xe
+
+# umount
+PARENT_DIR=$(dirname ${ROOTFS})
+while mount | grep -q "$PARENT_DIR"; do
+  LOCS=$(mount | grep "$PARENT_DIR" | cut -f 3 -d ' ' | sort -r)
+  for loc in $LOCS; do
+    umount "$loc"
+  done
+done
 
 FINAL_DIR="${WORKDIR}/image"
 FINAL_ROOTFS_DIR="${FINAL_DIR}/rootfs"
