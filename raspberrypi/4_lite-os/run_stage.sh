@@ -31,7 +31,7 @@ EOF
 
 # patch
 bash patches/patch_ld.so.preload.sh
-bash patches/rehash.sh
+bash patches/patch_rehash.sh
 
 logger "Set initial services, resize2fs_once, apt optimization, rc.local and others..."
 # resize disk on first boot
