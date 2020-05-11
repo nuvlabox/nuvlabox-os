@@ -3,7 +3,10 @@
 EXTRA_CONFIG_FILE=${1}
 
 docker run --privileged \
-          --rm --name nuvlabox-os-build \
-          -v $(pwd):/opt -w /opt \
+          --name nuvlabox-os-build \
+          -v $(pwd):/tmp -w /opt \
+          -e CONFIG="${EXTRA_CONFIG_FILE}" \
           debian:buster \
-          ./build.sh "${EXTRA_CONFIG_FILE}"
+          bash -e -o pipefail -c "cp -fr /tmp/* /opt/ &&
+                                  ./build.sh \"${EXTRA_CONFIG_FILE}\" &&
+                                  cp -fr *zip /tmp/"

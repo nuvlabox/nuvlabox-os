@@ -26,7 +26,7 @@ apt-get -y dist-upgrade
 apt-get clean
 EOF
 
-logger "Add resolv.conf - $(cat network/resolve.conf)"
+logger "Add resolv.conf - $(cat network/resolv.conf)"
 install -m 644 network/resolv.conf "${ROOTFS}/etc/"
 
 logger "Set partuuid"

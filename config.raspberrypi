@@ -10,3 +10,5 @@ RELEASE=buster
 MIRROR=http://raspbian.raspberrypi.org/raspbian/
 DBOOTSTRAP_EXTRA_ARGS="--keyring $(pwd)/raspberrypi/raspberrypi.gpg"
 TARGET_HOSTNAME="nuvlabox-os-raspberrypi"
+
+DEVELOPMENT=1
