@@ -131,7 +131,7 @@ echo 1 > "${ROOTFS}/var/lib/systemd/rfkill/platform-fe300000.mmcnr:wlan"
 ##############################################
 logger "Setting timezone"
 echo "Etc/UTC" > "${ROOTFS}/etc/timezone"
-rm "${ROOTFS}/etc/localtime"
+rm "${ROOTFS}/etc/localtime" || echo "${ROOTFS}/etc/localtime not found...moving on"
 
 nb_chroot << EOF
 dpkg-reconfigure -f noninteractive tzdata
