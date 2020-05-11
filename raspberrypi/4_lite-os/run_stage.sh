@@ -133,6 +133,6 @@ logger "Setting timezone"
 echo "Etc/UTC" > "${ROOTFS}/etc/timezone"
 rm "${ROOTFS}/etc/localtime"
 
-on_chroot << EOF
+nb_chroot << EOF
 dpkg-reconfigure -f noninteractive tzdata
 EOF
