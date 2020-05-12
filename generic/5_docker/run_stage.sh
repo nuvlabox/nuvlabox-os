@@ -6,7 +6,7 @@ logger "Installing Docker..."
 nb_chroot <<EOF
 apt-get update
 apt-get -o APT::Acquire::Retries=3 install -y $(echo $(envsubst < packages/requirements.apt))
-curl -fsSL https://download.docker.com/linux/debian/gpg | sudo apt-key add -
+curl -fsSL https://download.docker.com/linux/debian/gpg | apt-key add -
 add-apt-repository \
    "deb [arch=$ARCHITECTURE] https://download.docker.com/linux/debian \
    $RELEASE \
