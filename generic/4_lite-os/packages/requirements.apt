@@ -1,6 +1,10 @@
 curl
-openssh
+ntp
+ssh
 grub2
 firmware-linux
 firmware-linux-free
 firmware-linux-nonfree
+linux-base
+linux-image-$ARCHITECTURE
+gnupg
