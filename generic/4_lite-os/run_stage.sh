@@ -15,7 +15,7 @@ logger "Install all package requirements for lite OS version"
 nb_chroot <<EOF
 apt-get update
 echo "grub-pc grub-pc/install_devices_empty   boolean true" | debconf-set-selections
-DEBIAN_FRONTEND=text apt-get -o APT::Acquire::Retries=3 install -y $(echo $(envsubst < packages/requirements.apt))
+DEBIAN_FRONTEND=noninteractive apt-get -o APT::Acquire::Retries=3 install -y $(echo $(envsubst < packages/requirements.apt))
 EOF
 
 
