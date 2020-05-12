@@ -63,6 +63,15 @@ unmount_image(){
 export -f unmount_image
 ##### end of functions
 
+
+# where the Debian filesystem is mounted
+ROOTFS=${ROOTFS:-""}
+
+if [ -z "${ROOTFS}" ]; then
+	echo "ERROR: ROOTFS is not defined! Maybe you're missing WORKDIR from your config"
+	exit 1
+fi
+
 [ -z "${IMAGE_NAME}" ] && logger "Please define IMAGE_NAME in the configuration file" && exit 1
 export IMAGE_NAME_SUFFIX=$(date +"%s")
 
