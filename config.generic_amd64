@@ -3,7 +3,7 @@
 #############################################
 
 IMAGE_NAME=nuvlabox-os-generic
-STAGE_BUNDLES="bootstrap generic common export-image"
+STAGE_BUNDLES="bootstrap generic export-image"
 ARCHITECTURE=amd64
 SETARCH_ARCHITECTURE=linux64
 RELEASE=buster

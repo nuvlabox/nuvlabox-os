@@ -38,8 +38,10 @@ ROOT_PARTUUID="${IMGID}-02"
 sed -i "s/BOOTDEV/PARTUUID=${BOOT_PARTUUID}/" "${ROOTFS}/etc/fstab"
 sed -i "s/ROOTDEV/PARTUUID=${ROOT_PARTUUID}/" "${ROOTFS}/etc/fstab"
 
-sed -i "s/ROOTDEV/PARTUUID=${ROOT_PARTUUID}/" "${ROOTFS}/boot/cmdline.txt"
-
+if [ -f "${ROOTFS}/boot/cmdline.txt" ]
+then
+  sed -i "s/ROOTDEV/PARTUUID=${ROOT_PARTUUID}/" "${ROOTFS}/boot/cmdline.txt"
+fi
 
 ############
 # FINISH
