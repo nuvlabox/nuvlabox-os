@@ -12,7 +12,7 @@ add-apt-repository \
    $RELEASE \
    stable"
 apt-get update
-apt-get install docker-ce docker-ce-cli containerd.io
+apt-get install -y docker-ce docker-ce-cli containerd.io
 EOF
 
 logger "Installing Docker Compose..."
