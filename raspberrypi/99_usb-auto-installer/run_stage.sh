@@ -19,3 +19,11 @@ install -m 644 auto-installer/systemd/nuvlabox-auto-installer-usb.service "${ROO
 nb_chroot <<EOF
 systemctl enable nuvlabox-auto-installer-usb
 EOF
+
+
+logger "Setting up NuvlaBox Engine USB Auto-installer feedback for Raspberry Pi"
+
+# set install binaries
+install -m "+x" files/nuvlabox-auto-installer-feedback "${ROOTFS}/usr/local/bin"
+
+

@@ -2,11 +2,11 @@
 
 set -e
 
-logger "Perform system tweaks"
-# Set fstab
-install -v -m 644 fstab/fstab "${ROOTFS}/etc/fstab"
+logger "Automate and perform system tweaks through preseed"
 
-# set default user
+
+
+##################### TOFIX - below
 if [ ! -z $DEVELOPMENT ] && [ $DEVELOPMENT -eq 1 ]
 then
   logger "ATTENTION: building DEVELOPMENT image...adding default user 'sixsq'"
