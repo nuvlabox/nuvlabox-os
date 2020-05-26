@@ -70,5 +70,5 @@ then
                                       --debian-mirror "${MIRROR}" \
                                       --keyboard "us")
 
-  mkdir -p "${WORKDIR}/profiles"
+  mkdir -p "${PROFILES}"
 fi

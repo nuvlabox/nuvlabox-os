@@ -1,7 +1,0 @@
-curl
-ntp
-ssh
-grub2
-linux-base
-linux-image-$ARCHITECTURE
-gnupg

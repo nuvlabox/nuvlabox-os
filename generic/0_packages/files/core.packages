@@ -2,3 +2,10 @@ curl
 ntp
 ssh
 linux-base
+python
+apt-transport-https
+ca-certificates
+gnupg-agent
+software-properties-common
+libffi-dev
+libssl-dev

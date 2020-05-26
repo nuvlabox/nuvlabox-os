@@ -2,9 +2,6 @@
 
 set -e
 
-# which Debian release to use
-PROFILES="${WORKDIR}/profiles"
-
 if [ ! -d "${PROFILES}" ]
 then
   logger "ERR: cannot find 'profiles' folder in WORDKIR ${WORKDIR}"
