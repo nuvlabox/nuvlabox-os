@@ -5,7 +5,7 @@ set -e
 logger "Automate and perform system tweaks through preseed"
 
 RELEASE=${RELEASE:-"buster"}
-PRESEED="${PROFILES}/core.preseed"
+PRESEED="${PROFILES}/default.preseed"
 wget https://www.debian.org/releases/${RELEASE}/example-preseed.txt -O "${PRESEED}"
 
 # locale, language
@@ -62,4 +62,4 @@ logger "Tweaking media ejection after installation"
 sed -i '/cdrom-detect\/eject/c\d-i cdrom-detect\/eject boolean true' "${PRESEED}"
 
 
-(cd ${WORKDIR} && env -i TERM=xterm bash -l -c "build-simple-cdd --force-root --profiles core --no-do-mirror")
+(cd ${WORKDIR} && env -i TERM=xterm bash -l -c "build-simple-cdd --force-root --profiles --profiles default --auto-profiles default --no-do-mirror")

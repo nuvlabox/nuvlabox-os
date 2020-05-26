@@ -10,6 +10,6 @@ fi
 
 logger "Installing additional core packages"
 
-cp -f files/core.packages "${PROFILES}"
+cp -f files/*.packages "${PROFILES}"
 
-(cd ${WORKDIR} && env -i TERM=xterm bash -l -c "build-simple-cdd --force-root --profiles core")
+(cd ${WORKDIR} && env -i TERM=xterm bash -l -c "build-simple-cdd --force-root --profiles default --auto-profiles default")
