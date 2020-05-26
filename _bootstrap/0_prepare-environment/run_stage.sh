@@ -62,11 +62,11 @@ then
 
   apt-get -y install simple-cdd
 
-  export ARCHES="${ARCHITECTURE}"
-
-  pushd "${WORKDIR}" > /dev/null
-  build-simple-cdd --force-root --verbose --dist "${RELEASE}" --debian-mirror "${MIRROR}"
-  popd > /dev/null
+  (cd "${WORKDIR}" && env -i TERM=xterm ARCHES="${ARCHITECTURE}" \
+            bash -l -c "build-simple-cdd --force-root --verbose --dist ${RELEASE} --debian-mirror ${MIRROR}")
 
   mkdir -p "${PROFILES}"
+else
+  logger "ERR: unrecognized BUILD tool ${BUILD_WITH}"
+  exit 1
 fi

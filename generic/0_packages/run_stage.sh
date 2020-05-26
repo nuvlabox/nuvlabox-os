@@ -12,8 +12,4 @@ logger "Installing additional core packages"
 
 cp -f files/core.packages "${PROFILES}"
 
-pushd "${WORKDIR}" > /dev/null
-
-build-simple-cdd --force-root --profiles core
-
-popd > /dev/null
+(cd ${WORKDIR} && env -i TERM=xterm bash -l -c "build-simple-cdd --force-root --profiles core")
