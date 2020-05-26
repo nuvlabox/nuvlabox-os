@@ -60,7 +60,7 @@ elif [ "${BUILD_WITH}" == "simple-cdd" ]
 then
   logger "Building OS with simple-cdd"
 
-  apt-get -y install simple-cdd
+  apt-get -y install simple-cdd zip
 
   (cd "${WORKDIR}" && env -i TERM=xterm ARCHES="${ARCHITECTURE}" \
             bash -l -c "build-simple-cdd --force-root --verbose --dist ${RELEASE} --debian-mirror ${MIRROR}")
