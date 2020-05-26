@@ -61,8 +61,5 @@ sed -i 's/#d-i pkgsel\/upgrade/d-i pkgsel\/upgrade/' "${PRESEED}"
 logger "Tweaking media ejection after installation"
 sed -i '/cdrom-detect\/eject/c\d-i cdrom-detect\/eject boolean true' "${PRESEED}"
 
-pushd "${WORKDIR}" > /dev/null
 
-build-simple-cdd --force-root --profiles core --no-do-mirror
-
-popd > /dev/null
+(cd ${WORKDIR} && env -i TERM=xterm bash -l -c "build-simple-cdd --force-root --profiles core --no-do-mirror")
