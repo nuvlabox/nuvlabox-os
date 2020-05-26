@@ -12,4 +12,8 @@ logger "Installing additional core packages"
 
 cp -f files/core.packages "${PROFILES}"
 
-(cd ${WORKDIR} && build-simple-cdd --force-root --profiles core)
+pushd "${WORKDIR}" > /dev/null
+
+build-simple-cdd --force-root --profiles core
+
+popd > /dev/null

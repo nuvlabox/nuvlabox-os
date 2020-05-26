@@ -64,11 +64,9 @@ then
 
   export ARCHES="${ARCHITECTURE}"
 
-  (cd ${WORKDIR} && build-simple-cdd --force-root --verbose \
-                                      --dist "${RELEASE}" \
-                                      --locale "en_US" \
-                                      --debian-mirror "${MIRROR}" \
-                                      --keyboard "us")
+  pushd "${WORKDIR}" > /dev/null
+  build-simple-cdd --force-root --verbose --dist "${RELEASE}" --debian-mirror "${MIRROR}"
+  popd > /dev/null
 
   mkdir -p "${PROFILES}"
 fi

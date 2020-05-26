@@ -8,4 +8,8 @@ cp -f files/core.postinst "${PROFILES}"
 
 sed -i "s/RELEASE/${RELEASE}/g" "${PROFILES}/core.postinst"
 
-(cd ${WORKDIR} && build-simple-cdd --force-root --profiles core)
+pushd "${WORKDIR}" > /dev/null
+
+build-simple-cdd --force-root --profiles core
+
+popd > /dev/null
