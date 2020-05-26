@@ -112,7 +112,7 @@ do
   done
 done
 
-for image in $(find . -name *.zip)
+for image in $(find "${WORKDIR}" -name *.zip)
 do
   cp -fr "${image}" .
   logger "Copied ${image} to current directory"
