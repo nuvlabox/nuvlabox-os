@@ -76,6 +76,9 @@ fi
 export IMAGE_NAME_SUFFIX=$(date +"%s")
 
 mkdir -p "${WORKDIR}"
+# only for simple-cdd builds
+export PROFILES="${WORKDIR}/profiles"
+##
 
 logger "Starting image builder for ${IMAGE_NAME} at ${WORKDIR}"
 
@@ -109,7 +112,7 @@ do
   done
 done
 
-for image in $(find . -name *.zip)
+for image in $(find "${WORKDIR}" -name "*.zip")
 do
   cp -fr "${image}" .
   logger "Copied ${image} to current directory"

@@ -4,4 +4,6 @@
 3_minimal-os
 4_lite-os
 5_docker
-99_usb-auto-installer-feedback
+99_usb-auto-installer
+999_start-export
+9999_finalize

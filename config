@@ -10,9 +10,8 @@ IMAGE_NAME=nuvlabox-os-base
 # and ordered by execution, from first to be executed to last
 #
 # Please separate the different stages with a white space
-# IMPORTANT: bootstrap is mandatory for the NuvlaBox OS
-# IMPORTANT: export-image is highly recommended since it is on that stage that the image file is generated
-STAGE_BUNDLES="bootstrap export-image"
+# IMPORTANT: _bootstrap is mandatory for the NuvlaBox OS
+STAGE_BUNDLES="_bootstrap"
 
 
 # select the desired architecture
@@ -53,7 +52,7 @@ WORKDIR="$(pwd)/output/$(date +'%Y%m%d_%H%M%S')/${IMAGE_NAME}"
 LOG_FILE="${WORKDIR}/output.log"
 
 
-# where to mount the new filesystem
+# where to mount the new filesystem (in case you are using debootstrap)
 ROOTFS="${WORKDIR}/rootfs"
 
 
@@ -62,3 +61,12 @@ ROOTFS="${WORKDIR}/rootfs"
 #
 # default user:pass is -> sixsq:nuvlabox
 DEVELOPMENT=0
+
+
+# dbootstrap creates a full filesystem, which means it's suited for Live images
+# in case we need an installer, to flash an hard drive, then we don't use debootstrap
+# the current available OS build methods are:
+#    - debootstrap
+#    - simple-cdd
+# default is debootstrap
+#BUILD_WITH=debootstrap
