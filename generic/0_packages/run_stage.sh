@@ -12,4 +12,4 @@ logger "Installing additional core packages"
 
 cp -f files/*.packages "${PROFILES}"
 
-(cd ${WORKDIR} && env -i TERM=xterm bash -l -c "build-simple-cdd --force-root --verbose --profiles nuvlabox --auto-profiles nuvlabox")
+(cd ${WORKDIR} && env -i TERM=xterm bash -l -c "build-simple-cdd --force-root --verbose --profiles NUVLABOX --auto-profiles NUVLABOX")
