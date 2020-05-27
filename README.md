@@ -3,8 +3,6 @@ Common configurations and procedures for all NuvlaBox OS images.
 
 ## Understanding the process
 
-This project relies entirely on `debootstrap` and thus all NuvlaBox OS images built from it, will be Debian-based.
-
 The build process it stage-based, with a **stage** being any folder containing subfolders that have a **run_stage.sh** file.
 
 The build stages must be mentioned in the configuration file in order to be considered by the build. 
