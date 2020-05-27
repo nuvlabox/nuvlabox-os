@@ -3,6 +3,7 @@ ntp
 ssh
 linux-base
 python
+gnupg2
 apt-transport-https
 ca-certificates
 gnupg-agent

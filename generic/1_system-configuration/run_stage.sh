@@ -41,7 +41,7 @@ then
   logger "ATTENTION: building DEVELOPMENT image...adding default user 'sixsq', with password 'sixsq'"
   sed -i '/passwd\/user-fullname/c\d-i passwd/user-fullname string SixSq' "${PRESEED}"
   sed -i '/passwd\/username/c\d-i passwd/username string sixsq' "${PRESEED}"
-  sed -i '/passwd\/user-password/c\d-i passwd\/user-password password sixsq' "${PRESEED}"
+  sed -i '/passwd\/user-password password/c\d-i passwd\/user-password password sixsq' "${PRESEED}"
   sed -i '/passwd\/user-password-again/c\d-i passwd\/user-password-again password sixsq' "${PRESEED}"
 fi
 
@@ -50,7 +50,9 @@ logger "Setting clock and timezone"
 sed -i 's/US\/Eastern/Etc\/UTC/' "${PRESEED}"
 
 # partitioning
-#logger "Automating partitioning"
+logger "Automating partitioning"
+echo 'd-i grub-installer/bootdev  string /dev/sda' >> "${PRESEED}"
+echo 'd-i grub-installer/bootdev  string default' >> "${PRESEED}"
 #sed -i 's/#d-i partman-auto\/init_automatically_partition/d-i partman-auto\/init_automatically_partition/' "${PRESEED}"
 
 # additional software
