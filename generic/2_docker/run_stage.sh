@@ -4,9 +4,9 @@ set -e
 
 logger "Installing Docker and Docker Compose..."
 
-cp -f files/default.postinst "${PROFILES}"
+cp -f files/nuvlabox.postinst "${PROFILES}"
 
-sed -i "s/RELEASE/${RELEASE}/g" "${PROFILES}/default.postinst"
-chmod +x "${PROFILES}/default.postinst"
+sed -i "s/RELEASE/${RELEASE}/g" "${PROFILES}/nuvlabox.postinst"
+chmod +x "${PROFILES}/nuvlabox.postinst"
 
-(cd ${WORKDIR} && env -i TERM=xterm bash -l -c 'build-simple-cdd --force-root --verbose --profiles default --auto-profiles default')
+(cd ${WORKDIR} && env -i TERM=xterm bash -l -c 'build-simple-cdd --force-root --verbose --profiles nuvlabox --auto-profiles nuvlabox')

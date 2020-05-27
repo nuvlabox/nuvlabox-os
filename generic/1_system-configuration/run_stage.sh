@@ -72,4 +72,4 @@ logger "Tweaking media ejection after installation"
 sed -i '/cdrom-detect\/eject/c\d-i cdrom-detect\/eject boolean true' "${PRESEED}"
 
 
-(cd ${WORKDIR} && env -i TERM=xterm bash -l -c "build-simple-cdd --force-root --verbose --profiles default --auto-profiles default --no-do-mirror")
+(cd ${WORKDIR} && env -i TERM=xterm bash -l -c "build-simple-cdd --force-root --verbose --profiles nuvlabox --auto-profiles nuvlabox --no-do-mirror")
