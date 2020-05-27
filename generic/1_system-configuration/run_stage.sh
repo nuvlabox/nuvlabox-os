@@ -21,7 +21,7 @@ TARGET_HOSTNAME=${TARGET_HOSTNAME:-"nuvlabox-os"}
 
 logger "Setting hostname to ${TARGET_HOSTNAME} and erase domain name"
 sed -i "s/unassigned-hostname/${TARGET_HOSTNAME}/" "${PRESEED}"
-sed -i "s/d-i netcfg\/get_domain/#d-i netcfg\/get_domain/" "${PRESEED}"
+sed -i "s/unassigned-domain/nuvlabox/" "${PRESEED}"
 sed -i "s/somehost/${TARGET_HOSTNAME}/" "${PRESEED}"
 
 # disable prompt to load_firmware
@@ -41,8 +41,8 @@ then
   logger "ATTENTION: building DEVELOPMENT image...adding default user 'sixsq', with password 'sixsq'"
   sed -i '/passwd\/user-fullname/c\d-i passwd/user-fullname string SixSq' "${PRESEED}"
   sed -i '/passwd\/username/c\d-i passwd/username string sixsq' "${PRESEED}"
-  sed -i '/passwd\/username/c\d-i passwd/username string sixsq' "${PRESEED}"
-  sed -i 's/password insecure/password sixsq/' "${PRESEED}"
+  sed -i '/passwd\/user-password/c\d-i passwd\/user-password password sixsq' "${PRESEED}"
+  sed -i '/passwd\/user-password-again/c\d-i passwd\/user-password-again password sixsq' "${PRESEED}"
 fi
 
 # clock and timezone
@@ -52,6 +52,10 @@ sed -i 's/US\/Eastern/Etc\/UTC/' "${PRESEED}"
 # partitioning
 #logger "Automating partitioning"
 #sed -i 's/#d-i partman-auto\/init_automatically_partition/d-i partman-auto\/init_automatically_partition/' "${PRESEED}"
+
+# additional software
+logger "Setting initial software packs"
+sed -i '/tasksel tasksel\/first/c\tasksel tasksel/first multiselect standard' "${PRESEED}"
 
 # apt
 logger "Configuring APT"
