@@ -13,6 +13,8 @@ logger "Setting language and location"
 sed -i '/debian-installer\/language/c\d-i debian-installer\/language string en' "${PRESEED}"
 sed -i '/debian-installer\/country/c\d-i debian-installer\/country string CH' "${PRESEED}"
 sed -i '/debian-installer\/locale/c\d-i debian-installer\/locale string en_US.UTF-8' "${PRESEED}"
+sed -i '/localechooser\/supported-locales/c\d-i localechooser\/supported-locales multiselect en_US.UTF-8' "${PRESEED}"
+
 
 # set hostname
 TARGET_HOSTNAME=${TARGET_HOSTNAME:-"nuvlabox-os"}
@@ -48,14 +50,18 @@ logger "Setting clock and timezone"
 sed -i 's/US\/Eastern/Etc\/UTC/' "${PRESEED}"
 
 # partitioning
-logger "Automating partitioning"
-sed -i 's/#d-i partman-auto\/init_automatically_partition/d-i partman-auto\/init_automatically_partition/' "${PRESEED}"
+#logger "Automating partitioning"
+#sed -i 's/#d-i partman-auto\/init_automatically_partition/d-i partman-auto\/init_automatically_partition/' "${PRESEED}"
 
 # apt
 logger "Configuring APT"
 sed -i 's/#d-i apt-setup\/services-select/d-i apt-setup\/services-select/' "${PRESEED}"
 sed -i 's/#d-i apt-setup\/security_host/d-i apt-setup\/security_host/' "${PRESEED}"
 sed -i 's/#d-i pkgsel\/upgrade/d-i pkgsel\/upgrade/' "${PRESEED}"
+
+# popularity contest
+logger "Disable popularity contest participation"
+sed -i 's/#popularity-contest/popularity-contest/' "${PRESEED}"
 
 # eject media after installation
 logger "Tweaking media ejection after installation"
