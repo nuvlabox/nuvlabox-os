@@ -10,3 +10,8 @@ gnupg-agent
 software-properties-common
 libffi-dev
 libssl-dev
+inotify-tools
+ntfs-3g
+wget
+jq
+udevil

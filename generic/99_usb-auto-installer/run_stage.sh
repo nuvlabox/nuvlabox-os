@@ -4,26 +4,34 @@ set -e
 
 logger "Setting up NuvlaBox Engine USB Auto-installer"
 
-# install requirements
-nb_chroot <<EOF
-apt-get -o APT::Acquire::Retries=3 install -y $(echo $(cat auto-installer/requirements.apt))
+POSTINST="${PROFILES}/NUVLABOX.postinst"
+EXTRA_FILES="${PROFILES}/NUVLABOX.extra"
+
+logger "Adding custom files to image"
+cat >> "${EXTRA_FILES}" <<EOF
+$(pwd)/auto-installer/nuvlabox-auto-installer-usb
+$(pwd)/auto-installer/systemd/nuvlabox-auto-installer-usb.service
 EOF
+# TODO: add $(pwd)/files/nuvlabox-auto-installer-feedback
 
-sed -i 's/PrivateMounts=yes/PrivateMounts=no/' "${ROOTFS}/lib/systemd/system/systemd-udevd.service"
+logger "Preparing post script to install NuvlaBox Engine Auto-installer service"
+cat >> "${POSTINST}" <<EOF
 
-# set install binaries
-install -m "+x" auto-installer/nuvlabox-auto-installer-usb "${ROOTFS}/usr/local/bin"
+# scripts from ${STAGE}
+sed -i 's/PrivateMounts=yes/PrivateMounts=no/' /lib/systemd/system/systemd-udevd.service
 
-# set systemd service
-install -m 644 auto-installer/systemd/nuvlabox-auto-installer-usb.service "${ROOTFS}/etc/systemd/system/nuvlabox-auto-installer-usb.service"
-nb_chroot <<EOF
+systemctl daemon-reload
+systemctl restart systemd-udevd
+
+install -m "+x" nuvlabox-auto-installer-usb /usr/local/bin
+install -m 644 nuvlabox-auto-installer-usb.service /etc/systemd/system/nuvlabox-auto-installer-usb.service
+
 systemctl enable nuvlabox-auto-installer-usb
+
+# TODO: add feedback scripts
+#install -m "+x" nuvlabox-auto-installer-feedback /usr/local/bin
+
+systemctl start nuvlabox-auto-installer-usb
 EOF
 
-
-logger "Setting up NuvlaBox Engine USB Auto-installer feedback for Raspberry Pi"
-
-# set install binaries
-install -m "+x" files/nuvlabox-auto-installer-feedback "${ROOTFS}/usr/local/bin"
-
-
+(cd ${WORKDIR} && env -i TERM=xterm bash -l -c 'build-simple-cdd --force-root --verbose --profiles NUVLABOX --auto-profiles NUVLABOX --locale "en_US.UTF-8" --keyboard us')

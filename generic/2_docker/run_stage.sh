@@ -9,4 +9,4 @@ cp -f files/NUVLABOX.postinst "${PROFILES}"
 sed -i "s/RELEASE/${RELEASE}/g" "${PROFILES}/NUVLABOX.postinst"
 chmod +x "${PROFILES}/NUVLABOX.postinst"
 
-(cd ${WORKDIR} && env -i TERM=xterm bash -l -c 'build-simple-cdd --force-root --verbose --profiles NUVLABOX --auto-profiles NUVLABOX')
+(cd ${WORKDIR} && env -i TERM=xterm bash -l -c 'build-simple-cdd --force-root --verbose --profiles NUVLABOX --auto-profiles NUVLABOX --locale "en_US.UTF-8" --keyboard us')

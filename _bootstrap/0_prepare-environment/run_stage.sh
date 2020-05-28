@@ -63,7 +63,7 @@ then
   apt-get -y install simple-cdd zip
 
   (cd "${WORKDIR}" && env -i TERM=xterm ARCHES="${ARCHITECTURE}" \
-            bash -l -c "build-simple-cdd --force-root --verbose --dist ${RELEASE} --debian-mirror ${MIRROR}")
+            bash -l -c "build-simple-cdd --force-root --verbose --dist ${RELEASE} --debian-mirror ${MIRROR} --locale 'en_US.UTF-8' --keyboard us")
 
   mkdir -p "${PROFILES}"
 else
