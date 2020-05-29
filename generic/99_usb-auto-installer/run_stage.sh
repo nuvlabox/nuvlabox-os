@@ -15,16 +15,19 @@ EOF
 # TODO: add $(pwd)/files/nuvlabox-auto-installer-feedback
 
 logger "Preparing post script to install NuvlaBox Engine Auto-installer service"
-cat >> "${POSTINST}" <<EOF
 
-# scripts from ${STAGE}
+cat >> "${POSTINST}" <<\EOF
+
 sed -i 's/PrivateMounts=yes/PrivateMounts=no/' /lib/systemd/system/systemd-udevd.service
 
 systemctl daemon-reload
 systemctl restart systemd-udevd
 
-install -m "+x" nuvlabox-auto-installer-usb /usr/local/bin
-install -m 644 nuvlabox-auto-installer-usb.service /etc/systemd/system/nuvlabox-auto-installer-usb.service
+# set install binaries
+install -m "+x" "$(find /media -name nuvlabox-auto-installer-usb)" /usr/local/bin
+
+# set systemd service
+install -m 644 "$(find /media -name nuvlabox-auto-installer-usb.service)" /etc/systemd/system/nuvlabox-auto-installer-usb.service
 
 systemctl enable nuvlabox-auto-installer-usb
 
