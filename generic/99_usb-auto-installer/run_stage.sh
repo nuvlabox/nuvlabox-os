@@ -11,8 +11,8 @@ logger "Adding custom files to image"
 cat >> "${EXTRA_FILES}" <<EOF
 $(pwd)/auto-installer/nuvlabox-auto-installer-usb
 $(pwd)/auto-installer/systemd/nuvlabox-auto-installer-usb.service
+$(pwd)/files/nuvlabox-auto-installer-feedback
 EOF
-# TODO: add $(pwd)/files/nuvlabox-auto-installer-feedback
 
 logger "Preparing post script to install NuvlaBox Engine Auto-installer service"
 
@@ -31,8 +31,8 @@ install -m 644 "$(find /media -name nuvlabox-auto-installer-usb.service)" /etc/s
 
 systemctl enable nuvlabox-auto-installer-usb
 
-# TODO: add feedback scripts
-#install -m "+x" nuvlabox-auto-installer-feedback /usr/local/bin
+# install feedback binary
+install -m "+x" "$(find /media -name nuvlabox-auto-installer-feedback)" /usr/local/bin
 
 systemctl start nuvlabox-auto-installer-usb
 EOF

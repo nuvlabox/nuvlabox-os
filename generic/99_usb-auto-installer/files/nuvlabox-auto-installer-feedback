@@ -1,0 +1,34 @@
+#!/bin/sh
+
+# Gives an external feedback to the user, to inform on the success or failure of the NuvlaBox installation
+# $1 can be SUCCESS, ERROR or START, corresponding to the different phases and states of the NuvlaBox installation
+
+
+# TODO: beep will only work on machine with an internal built-in speaker, which is not the case for most industrialized edge computers
+# try to find another way...for now, these are simply loggers and placeholders, to keep consistency with the other NuvlaBox OS releases
+state="${1}"
+
+if [ "${state}" = "SUCCESS" ]
+then
+  echo "SUCCESS"
+  env -i beep || echo "BEEP not supported"
+fi
+
+
+if [ "${state}" = "ERROR" ]
+then
+  echo "ERROR"
+  env -i beep || echo "BEEP not supported"
+  env -i beep || echo "BEEP not supported"
+  env -i beep || echo "BEEP not supported"
+  env -i beep || echo "BEEP not supported"
+fi
+
+
+# START should also mean that user can safely remove the USB drive,
+# since the installation process already has all the necessary information
+if [ "${state}" = "START" ]
+then
+  echo "START"
+  env -i beep || echo "BEEP not supported"
+fi
