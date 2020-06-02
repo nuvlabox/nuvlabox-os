@@ -25,7 +25,7 @@ If you want to create your own custom stage, or add a new recipe to a stage, sim
     mkdir -p mystage/0_install-packages
     mkdir -p mystage/1_users
     ```
-    Finally, for it to be considered for exercution, make sure you have your recipe scripts inside, in an executable file called `run_stage.sh`.
+    Finally, for it to be considered for execution, make sure you have your recipe scripts inside, in an executable file called `run_stage.sh`.
     
     ```bash
     # just an example
