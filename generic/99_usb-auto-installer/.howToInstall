@@ -16,6 +16,13 @@ echo " === Restarting systemd-udevd"
 systemctl daemon-reload
 systemctl restart systemd-udevd
 
+echo " === Installing usbmount from source"
+git clone https://github.com/rbrito/usbmount /tmp/usbmount
+cd /tmp/usbmount && dpkg-buildpackage -us -uc -b && cd -
+apt --fix-broken install
+cd /tmp && dpkg -i usbmount*all*deb && cd -
+apt install -f
+
 echo " === Install auto-installer binary"
 install -m "+x" auto-installer/nuvlabox-auto-installer-usb /usr/local/bin
 

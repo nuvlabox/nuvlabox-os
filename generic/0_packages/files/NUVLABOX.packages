@@ -14,5 +14,8 @@ inotify-tools
 ntfs-3g
 wget
 jq
-udevil
 beep
+debhelper
+build-essential
+git
+lockfile-progs

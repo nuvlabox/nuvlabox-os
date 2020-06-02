@@ -23,6 +23,13 @@ sed -i 's/PrivateMounts=yes/PrivateMounts=no/' /lib/systemd/system/systemd-udevd
 systemctl daemon-reload
 systemctl restart systemd-udevd
 
+# install usbmount from source
+git clone https://github.com/rbrito/usbmount /tmp/usbmount
+cd /tmp/usbmount && dpkg-buildpackage -us -uc -b && cd -
+apt --fix-broken install
+cd /tmp && dpkg -i usbmount*all*deb && cd -
+apt install -f
+
 # set install binaries
 install -m "+x" "$(find /media -name nuvlabox-auto-installer-usb)" /usr/local/bin
 
