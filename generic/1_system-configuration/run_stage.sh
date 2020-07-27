@@ -57,7 +57,7 @@ fi
 logger "Setting clock and timezone"
 sed -i 's/US\/Eastern/Etc\/UTC/' "${PRESEED}"
 
-# partitioning
+# GRUB installation
 logger "Automating partitioning"
 echo 'd-i grub-installer/bootdev  string /dev/sda' >> "${PRESEED}"
 echo 'd-i grub-installer/bootdev  string default' >> "${PRESEED}"
@@ -89,6 +89,13 @@ sed -i 's/#popularity-contest/popularity-contest/' "${PRESEED}"
 # eject media after installation
 logger "Tweaking media ejection after installation"
 sed -i '/cdrom-detect\/eject/c\d-i cdrom-detect\/eject boolean true' "${PRESEED}"
+
+logger "Network configuration timeout"
+echo '
+d-i netcfg/link_wait_timeout string 15
+d-i netcfg/dhcp_timeout string 60
+d-i netcfg/dhcpv6_timeout string 60
+' >> "${PRESEED}"
 
 
 (cd ${WORKDIR} && env -i TERM=xterm bash -l -c "build-simple-cdd --force-root --verbose --profiles NUVLABOX --auto-profiles NUVLABOX --no-do-mirror --locale 'en_US.UTF-8' --keyboard us")
