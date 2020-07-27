@@ -1,0 +1,32 @@
+#!/bin/sh
+
+# Gives an external feedback to the user, to inform on the success or failure of the NuvlaBox installation
+# $1 can be SUCCESS, ERROR or START, corresponding to the different phases and states of the NuvlaBox installation
+
+state="${1}"
+
+if [ "${state}" = "SUCCESS" ]
+then
+  echo none > /sys/class/leds/a2_red/trigger
+  echo heartbeat > /sys/class/leds/a2_green/trigger
+  sleep 10
+  echo none > /sys/class/leds/a2_green/trigger
+fi
+
+
+if [ "${state}" = "ERROR" ]
+then
+  echo heartbeat > /sys/class/leds/a2_red/trigger
+  echo none > /sys/class/leds/a2_green/trigger
+  sleep 10
+  echo none > /sys/class/leds/a2_red/trigger
+fi
+
+
+# START should also mean that user can safely remove the USB drive,
+# since the installation process already has all the necessary information
+if [ "${state}" = "START" ]
+then
+  echo none > /sys/class/leds/a2_red/trigger
+  echo default-on > /sys/class/leds/a2_green/trigger
+fi
