@@ -19,3 +19,7 @@ debhelper
 build-essential
 git
 lockfile-progs
+haveged
+bridge-utils
+iptables-persistent
+dnsmasq
