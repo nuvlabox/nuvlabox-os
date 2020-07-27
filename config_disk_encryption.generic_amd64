@@ -1,0 +1,13 @@
+#############################################
+# OVERWRITE THE FOLLOWING CONFIG PARAMETERS #
+#############################################
+
+IMAGE_NAME=nuvlabox-os-generic
+STAGE_BUNDLES="_bootstrap generic disk_encryption"
+ARCHITECTURE=amd64
+RELEASE=buster
+TARGET_HOSTNAME="nuvlabox-os-generic"
+
+DEVELOPMENT=1
+
+BUILD_WITH="simple-cdd"
