@@ -2,6 +2,7 @@
 
 trigger_file="nuvlabox-installation-trigger-usb.nuvla"
 nuvlabox_local_dir="/opt/nuvlabox"
+gpg_pubkey="${nuvlabox_local_dir}/installation/gpg_pubkey.bin"
 
 log() {
   # logging wrapper
@@ -61,14 +62,32 @@ install_nuvlabox() {
   trigger_file_content=$(cat ${found_trigger_file})
   log "found ${found_trigger_file}. Auto-installing NuvlaBox..." \
       "NuvlaBox Auto-installer starting... check progress at /var/log/messages"
+  nuvlabox_installer_url="$(echo ${trigger_file_content} | jq -r .script)"
 
   nuvlabox_installer_file="/tmp/nuvlabox.installer.$(date +'%s')"
-  download_nuvlabox_installer "$(echo ${trigger_file_content} | jq -r .script)" "${nuvlabox_installer_file}"
+  nuvlabox_installer_file_gpg="${nuvlabox_installer_file}.gpg"
+  download_nuvlabox_installer "${nuvlabox_installer_url}" "$([ -z "${NB_INSTALLER_SKIP_GPG+x}" ] && echo ${nuvlabox_installer_file_gpg} || echo ${nuvlabox_installer_file})"
 
-  if [ $? -ne 0 ]
-  then
-    log "ERR: unable to download NuvlaBox installer $(echo ${trigger_file_content} | jq -r .script)"
+  if [ $? -ne 0 ]; then
+    log "ERR: unable to download NuvlaBox installer ${nuvlabox_installer_url}"
     exit 1
+  fi
+
+  if [ -z "$NB_INSTALLER_SKIP_GPG" ]; then
+    gpg --batch --keyring "${gpg_pubkey}" --no-default-keyring --verify "${nuvlabox_installer_file_gpg}"
+    if [ $? -ne 0 ]; then
+      log "ERR: GPG signature verification of ${nuvlabox_installer_file_gpg} failed"
+      rm -f "${nuvlabox_installer_file}"
+      exit 1
+    fi
+
+    gpg --batch --keyring "${gpg_pubkey}" --no-default-keyring --output "${nuvlabox_installer_file}" --decrypt "${nuvlabox_installer_file_gpg}"
+    if [ $? -ne 0 ]; then
+      log "ERR: GPG file extraction failed"
+      exit 1
+    fi
+  else
+    log "WARN: ignoring GPG signature verification"
   fi
 
   chmod +x "${nuvlabox_installer_file}"

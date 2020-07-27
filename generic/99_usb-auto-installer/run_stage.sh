@@ -12,6 +12,7 @@ cat >> "${EXTRA_FILES}" <<EOF
 $(pwd)/auto-installer/nuvlabox-auto-installer-usb
 $(pwd)/auto-installer/systemd/nuvlabox-auto-installer-usb.service
 $(pwd)/files/nuvlabox-auto-installer-feedback
+$(pwd)/files/sixsq.gpg_pubkey.bin
 EOF
 
 logger "Preparing post script to install NuvlaBox Engine Auto-installer service"
@@ -40,6 +41,10 @@ systemctl enable nuvlabox-auto-installer-usb
 
 # install feedback binary
 install -m "+x" "$(find /media -name nuvlabox-auto-installer-feedback)" /usr/local/bin
+
+# install sixsq gpg public key
+mkdir -p /opt/nuvlabox/installation
+install -m "+r" "$(find /media -name sixsq.gpg_pubkey.bin)" /opt/nuvlabox/installation/gpg_pubkey.bin
 
 systemctl start nuvlabox-auto-installer-usb
 EOF
