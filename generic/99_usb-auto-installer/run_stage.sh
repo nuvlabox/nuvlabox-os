@@ -43,8 +43,8 @@ systemctl enable nuvlabox-auto-installer-usb
 install -m "+x" "$(find /media -name nuvlabox-auto-installer-feedback)" /usr/local/bin
 
 # install sixsq gpg public key
-mkdir -p /opt/nuvlabox/installation
-install -m "+r" "$(find /media -name sixsq.gpg_pubkey.bin)" /opt/nuvlabox/installation/gpg_pubkey.bin
+mkdir -p /opt/nuvlabox
+install -m "+r" "$(find /media -name sixsq.gpg_pubkey.bin)" /opt/nuvlabox/gpg_pubkey.bin
 
 systemctl start nuvlabox-auto-installer-usb
 EOF

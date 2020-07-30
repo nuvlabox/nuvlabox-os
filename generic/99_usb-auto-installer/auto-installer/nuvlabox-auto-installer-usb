@@ -2,7 +2,7 @@
 
 trigger_file="nuvlabox-installation-trigger-usb.nuvla"
 nuvlabox_local_dir="/opt/nuvlabox"
-gpg_pubkey="${nuvlabox_local_dir}/installation/gpg_pubkey.bin"
+gpg_pubkey="${nuvlabox_local_dir}/gpg_pubkey.bin"
 
 log() {
   # logging wrapper
