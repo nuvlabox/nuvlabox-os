@@ -2,11 +2,11 @@
 # OVERWRITE THE FOLLOWING CONFIG PARAMETERS #
 #############################################
 
-IMAGE_NAME=nuvlabox-os-generic
-STAGE_BUNDLES="_bootstrap generic"
+IMAGE_NAME=nuvlabox-os.x86-64
+STAGE_BUNDLES="_bootstrap x86-64"
 ARCHITECTURE=amd64
 RELEASE=buster
-TARGET_HOSTNAME="nuvlabox-os-generic"
+TARGET_HOSTNAME="nuvlabox-os-x86-64"
 
 DEVELOPMENT=1
 
