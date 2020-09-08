@@ -1,6 +1,8 @@
 #!/bin/sh -x
 
 trigger_file="nuvlabox-installation-trigger-usb.nuvla"
+nuvlabox_local_dir="/opt/nuvlabox"
+gpg_pubkey="${nuvlabox_local_dir}/gpg_pubkey.bin"
 
 log() {
   # logging wrapper
@@ -15,7 +17,6 @@ log() {
     wall "${2}"
   fi
 }
-
 
 
 download_nuvlabox_installer() {
@@ -61,14 +62,32 @@ install_nuvlabox() {
   trigger_file_content=$(cat ${found_trigger_file})
   log "found ${found_trigger_file}. Auto-installing NuvlaBox..." \
       "NuvlaBox Auto-installer starting... check progress at /var/log/messages"
+  nuvlabox_installer_url="$(echo ${trigger_file_content} | jq -r .script)"
 
   nuvlabox_installer_file="/tmp/nuvlabox.installer.$(date +'%s')"
-  download_nuvlabox_installer "$(echo ${trigger_file_content} | jq -r .script)" "${nuvlabox_installer_file}"
+  nuvlabox_installer_file_gpg="${nuvlabox_installer_file}.gpg"
+  download_nuvlabox_installer "${nuvlabox_installer_url}" "$([ -z "${NB_INSTALLER_SKIP_GPG+x}" ] && echo ${nuvlabox_installer_file_gpg} || echo ${nuvlabox_installer_file})"
 
-  if [ $? -ne 0 ]
-  then
-    log "ERR: unable to download NuvlaBox installer $(echo ${trigger_file_content} | jq -r .script)"
+  if [ $? -ne 0 ]; then
+    log "ERR: unable to download NuvlaBox installer ${nuvlabox_installer_url}"
     exit 1
+  fi
+
+  if [ -z "$NB_INSTALLER_SKIP_GPG" ]; then
+    gpg --batch --keyring "${gpg_pubkey}" --no-default-keyring --verify "${nuvlabox_installer_file_gpg}"
+    if [ $? -ne 0 ]; then
+      log "ERR: GPG signature verification of ${nuvlabox_installer_file_gpg} failed"
+      rm -f "${nuvlabox_installer_file}"
+      exit 1
+    fi
+
+    gpg --batch --keyring "${gpg_pubkey}" --no-default-keyring --output "${nuvlabox_installer_file}" --decrypt "${nuvlabox_installer_file_gpg}"
+    if [ $? -ne 0 ]; then
+      log "ERR: GPG file extraction failed"
+      exit 1
+    fi
+  else
+    log "WARN: ignoring GPG signature verification"
   fi
 
   chmod +x "${nuvlabox_installer_file}"
@@ -77,7 +96,7 @@ install_nuvlabox() {
   nuvlabox-auto-installer-feedback START
 
   "${nuvlabox_installer_file}" --nuvlabox-installation-trigger-json "${trigger_file_content}" \
-                                --nuvlabox-installation-dir "/opt/nuvlabox/installation"
+                               --nuvlabox-installation-dir "${nuvlabox_local_dir}/installation"
 
   if [ $? -eq 0 ]
   then
@@ -130,6 +149,14 @@ try_install_nuvlabox() {
   install_nuvlabox "${mountpoint}"
 }
 
+
+local_trigger_file="${nuvlabox_local_dir}/${trigger_file}"
+if [ -f "${local_trigger_file}" ]; then
+  log "Install NuvlaBox Engine from local trigger file"
+  docker swarm init || true
+  install_nuvlabox "${nuvlabox_local_dir}" \
+  && rm -f "${local_trigger_file}"
+fi
 
 pipefail=$(date +%s)
 

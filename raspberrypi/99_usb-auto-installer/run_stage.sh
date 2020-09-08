@@ -4,26 +4,49 @@ set -e
 
 logger "Setting up NuvlaBox Engine USB Auto-installer"
 
-# install requirements
-nb_chroot <<EOF
-apt-get -o APT::Acquire::Retries=3 install -y $(echo $(cat auto-installer/requirements.apt))
+POSTINST="${PROFILES}/NUVLABOX.postinst"
+EXTRA_FILES="${PROFILES}/NUVLABOX.extra"
+
+logger "Adding custom files to image"
+cat >> "${EXTRA_FILES}" <<EOF
+$(pwd)/auto-installer/nuvlabox-auto-installer-usb
+$(pwd)/auto-installer/systemd/nuvlabox-auto-installer-usb.service
+$(pwd)/files/nuvlabox-auto-installer-feedback
+$(pwd)/files/sixsq.gpg_pubkey.bin
 EOF
 
-sed -i 's/PrivateMounts=yes/PrivateMounts=no/' "${ROOTFS}/lib/systemd/system/systemd-udevd.service"
+logger "Preparing post script to install NuvlaBox Engine Auto-installer service"
+
+cat >> "${POSTINST}" <<\EOF
+
+sed -i 's/PrivateMounts=yes/PrivateMounts=no/' /lib/systemd/system/systemd-udevd.service
+
+systemctl daemon-reload
+systemctl restart systemd-udevd
+
+# install usbmount from source
+git clone https://github.com/rbrito/usbmount /tmp/usbmount
+cd /tmp/usbmount && dpkg-buildpackage -us -uc -b && cd -
+apt --fix-broken install
+cd /tmp && dpkg -i usbmount*all*deb && cd -
+apt install -f
 
 # set install binaries
-install -m "+x" auto-installer/nuvlabox-auto-installer-usb "${ROOTFS}/usr/local/bin"
+install -m "+x" "$(find /media -name nuvlabox-auto-installer-usb)" /usr/local/bin
 
 # set systemd service
-install -m 644 auto-installer/systemd/nuvlabox-auto-installer-usb.service "${ROOTFS}/etc/systemd/system/nuvlabox-auto-installer-usb.service"
-nb_chroot <<EOF
+install -m 644 "$(find /media -name nuvlabox-auto-installer-usb.service)" /etc/systemd/system/nuvlabox-auto-installer-usb.service
+
 systemctl enable nuvlabox-auto-installer-usb
+
+# install feedback binary
+install -m "+x" "$(find /media -name nuvlabox-auto-installer-feedback)" /usr/local/bin
+
+# install sixsq gpg public key
+mkdir -p /opt/nuvlabox
+install -m "+r" "$(find /media -name sixsq.gpg_pubkey.bin)" /opt/nuvlabox/gpg_pubkey.bin
+
+systemctl start nuvlabox-auto-installer-usb
 EOF
 
-
-logger "Setting up NuvlaBox Engine USB Auto-installer feedback for Raspberry Pi"
-
-# set install binaries
-install -m "+x" files/nuvlabox-auto-installer-feedback "${ROOTFS}/usr/local/bin"
-
-
+(cd ${WORKDIR} && env -i TERM=xterm bash -l -c 'build-simple-cdd --force-root --verbose --profiles NUVLABOX --auto-profiles NUVLABOX --locale "en_US.UTF-8" --keyboard us')
