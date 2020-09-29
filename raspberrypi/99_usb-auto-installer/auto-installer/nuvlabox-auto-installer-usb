@@ -153,7 +153,7 @@ try_install_nuvlabox() {
 local_trigger_file="${nuvlabox_local_dir}/${trigger_file}"
 if [ -f "${local_trigger_file}" ]; then
   log "Install NuvlaBox Engine from local trigger file"
-  docker swarm init || true
+  docker swarm init || docker swarm init --advertise-addr "$(ip route show default 0.0.0.0/0 | awk '/default/ {print $5}')" || true
   install_nuvlabox "${nuvlabox_local_dir}" \
   && rm -f "${local_trigger_file}"
 fi
