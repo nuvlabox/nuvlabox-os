@@ -29,13 +29,13 @@ install -m "+x" auto-installer/nuvlabox-auto-installer-usb /usr/local/bin
 echo " === Install feedback binary"
 install -m "+x" files/nuvlabox-auto-installer-feedback /usr/local/bin || echo " === WARN: Auto-installer feedback not available for this OS"
 
+echo " === Install public GPG key from SixSq"
+mkdir -p /opt/nuvlabox
+install -m "+r" files/sixsq.gpg_pubkey.bin /opt/nuvlabox/gpg_pubkey.bin
+
 echo " === Set systemd service for auto-installer"
 install -m 644 auto-installer/systemd/nuvlabox-auto-installer-usb.service /etc/systemd/system/nuvlabox-auto-installer-usb.service
 
 systemctl daemon-reload
 systemctl start nuvlabox-auto-installer-usb
 systemctl enable nuvlabox-auto-installer-usb
-
-
-
-

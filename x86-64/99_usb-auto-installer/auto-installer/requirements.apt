@@ -6,3 +6,4 @@ wget
 git
 lockfile-progs
 jq
+gnupg
