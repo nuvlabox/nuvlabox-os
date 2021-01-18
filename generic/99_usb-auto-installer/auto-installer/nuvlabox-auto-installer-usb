@@ -156,7 +156,7 @@ try_install_nuvlabox() {
 local_trigger_file="${nuvlabox_local_dir}/${trigger_file}"
 if [ -f "${local_trigger_file}" ]; then
   log "Install NuvlaBox Engine from local trigger file"
-  swarm_init_args="--cert-expiry 26280"
+  swarm_init_args="--cert-expiry 26280h"
   docker swarm init $swarm_init_args \
   || docker swarm init $swarm_init_args --advertise-addr "$(get_default_gateway_interface)" \
   || true
