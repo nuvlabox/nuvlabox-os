@@ -18,6 +18,9 @@ log() {
   fi
 }
 
+get_default_gateway_interface() {
+  ip route show default 0.0.0.0/0 | awk '/default/ {print $5}'
+}
 
 download_nuvlabox_installer() {
   # fetches the latest NuvlaBox installer script from upstream
@@ -153,7 +156,10 @@ try_install_nuvlabox() {
 local_trigger_file="${nuvlabox_local_dir}/${trigger_file}"
 if [ -f "${local_trigger_file}" ]; then
   log "Install NuvlaBox Engine from local trigger file"
-  docker swarm init || docker swarm init --advertise-addr "$(ip route show default 0.0.0.0/0 | awk '/default/ {print $5}')" || true
+  swarm_init_args="--cert-expiry 26280"
+  docker swarm init $swarm_init_args \
+  || docker swarm init $swarm_init_args --advertise-addr "$(get_default_gateway_interface)" \
+  || true
   install_nuvlabox "${nuvlabox_local_dir}" \
   && rm -f "${local_trigger_file}"
 fi
