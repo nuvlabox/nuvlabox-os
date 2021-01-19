@@ -1,9 +1,0 @@
-inotify-tools
-ntfs-3g
-debhelper
-build-essential
-wget
-git
-lockfile-progs
-jq
-gnupg

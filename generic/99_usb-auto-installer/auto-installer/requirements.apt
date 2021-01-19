@@ -1,0 +1,10 @@
+inotify-tools
+ntfs-3g
+wget
+jq
+gnupg
+git
+debhelper
+build-essential
+lockfile-progs
+usbmount
