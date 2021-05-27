@@ -1,6 +1,7 @@
 0_packages
 1_system-configuration
 2_docker
+../generic/7_misc
 ../generic/99_usb-auto-installer
 99_usb-auto-installer
 9999_finalize

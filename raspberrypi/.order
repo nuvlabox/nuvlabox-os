@@ -4,6 +4,7 @@
 3_minimal-os
 4_lite-os
 5_docker
+../generic/7_misc
 ../generic/99_usb-auto-installer
 99_usb-auto-installer
 999_start-export
