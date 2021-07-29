@@ -89,3 +89,7 @@ At the end of the file, when successfull, you find:
  - the image .zip file in your folder, next to the build script
  - all the build files, including the original .img and .zip files under the WORKDIR, as defined in `config`
     - if you've built with Docker, those will be inside the container...you can restart it to get access
+
+## Copyright
+
+Copyright &copy; 2021, SixSq SA
