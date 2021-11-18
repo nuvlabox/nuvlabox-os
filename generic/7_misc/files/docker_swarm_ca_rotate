@@ -1,4 +1,3 @@
 #!/bin/sh
 
-/usr/bin/docker swarm ca --rotate
-
+/usr/bin/docker swarm ca --rotate --cert-expiry 26280h
