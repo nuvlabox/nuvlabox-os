@@ -26,6 +26,8 @@ nb_chroot (){
 }
 export -f nb_chroot
 
+export DEBIAN_FRONTEND=noninteractive
+
 unmount (){
 	if [ -z "$1" ]; then
     DIR=$PWD
