@@ -6,6 +6,7 @@ trigger_file="nuvlabox-installation-trigger-usb.nuvla"
 nuvlabox_local_dir="/opt/nuvlabox"
 gpg_pubkey="${nuvlabox_local_dir}/gpg_pubkey.bin"
 LOG_FILE='/var/log/nuvlabox-installer.log'
+DEF_MODS='"docker-compose.yml"'
 
 logger (){
 	date +"%F %T | PID $$ | $0: $*" | tee -a "${LOG_FILE}"
@@ -95,9 +96,6 @@ enable_swarm_mode() {
 
 log "Install NuvlaBox Engine"
 
-log "Install docker-compose"
-pip3 install docker-compose==1.28.6
-
 enable_swarm_mode
 
 nuvlabox_context=$(cat <<END
@@ -105,14 +103,14 @@ nuvlabox_context=$(cat <<END
   "name": "${NB_NAME:-NuvlaBox Cloud OS}",
   "description": "${NB_DESCRIPTION:-NuvlaBox Cloud OS autoinstall}",
   "version": "${NB_VERSION:-2.1.1}",
-  "endpoint": "https://nuvla.io",
-  "vpn": "infrastructure-service/eb8e09c2-8387-4f6d-86a4-ff5ddf3d07d7",
-  "script": "https://nuvla.io/ui/downloads/nuvlabox-self-registration.py.gpg",
+  "endpoint": "${NUVLA_ENDPOINT:-https://nuvla.io}",
+  "vpn": "${NUVLA_VPN_IS-infrastructure-service/eb8e09c2-8387-4f6d-86a4-ff5ddf3d07d7}",
+  "script": "${NUVLA_REG:-https://nuvla.io/ui/downloads/nuvlabox-self-registration.py.gpg}",
   "apikey": "${NB_API_KEY}",
   "apisecret": "${NB_API_SECRET}",
   "environment": {
-    "HOME": "/root",
-    "SKIP_MINIMUM_REQUIREMENTS": "true"
+    "HOME": "${USER_HOME:-/root}",
+    "SKIP_MINIMUM_REQUIREMENTS": "${NB_SKIP_MIN_REQS:-true}"
   },
   "ssh": {
     "public-keys": [
@@ -120,10 +118,10 @@ nuvlabox_context=$(cat <<END
     ]
   },
   "assets": [
-    "docker-compose.yml"
+    ${NB_MODULES:-"${DEF_MODS}"}
   ]
 }
 END
 )
 
-install_nuvlabox "${nuvlabox_context}"
+install_nuvlabox "${NB_CONTEXT:-$nuvlabox_context}"
