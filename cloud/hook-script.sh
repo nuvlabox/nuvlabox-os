@@ -22,7 +22,7 @@ export -f nb_chroot
 mkdir -p "${ROOTFS}/opt/nuvlabox"
 
 install -m "+x" files/nuvlabox-installer "${ROOTFS}/usr/local/bin/"
-install -m "+x" files/sixsq.gpg_pubkey.bin "${ROOTFS}/opt/nuvlabox/gpg_pubkey.bin"
+install -m "+r" files/sixsq.gpg_pubkey.bin "${ROOTFS}/opt/nuvlabox/gpg_pubkey.bin"
 install -m "+x" files/docker_swarm_ca_rotate "${ROOTFS}/etc/cron.daily/"
 
 logger "Add Exoscale to cloud-init datasources"
