@@ -42,8 +42,10 @@ EOF
 
 logger "Installing Docker Compose..."
 nb_chroot <<EOF
-# export DEBIAN_FRONTEND=noninteractive
+export DEBIAN_FRONTEND=noninteractive
+curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+chmod +x /usr/local/bin/docker-compose
 # apt-get install -y python3-cffi
-pip3 install wheel
+# pip3 install wheel
 # pip3 install docker-compose==1.28.6
 EOF
