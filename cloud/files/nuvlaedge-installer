@@ -1,0 +1,127 @@
+#!/bin/bash -x
+
+set -e
+
+trigger_file="nuvlaedge-installation-trigger-usb.nuvla"
+nuvlaedge_local_dir="/opt/nuvlaedge"
+gpg_pubkey="${nuvlaedge_local_dir}/gpg_pubkey.bin"
+LOG_FILE='/var/log/nuvlaedge-installer.log'
+DEF_MODS='"docker-compose.yml"'
+
+logger (){
+	date +"%F %T | PID $$ | $0: $*" | tee -a "${LOG_FILE}"
+}
+
+log() {
+  # logging wrapper
+  # $1 is the custom log message
+  # $2 is a wall message sent to all logged users
+
+  echo "NuvlaEdge installer: ${1}"
+  logger "NuvlaEdge installer: ${1}"
+
+  if [ ! -z "${2}" ]
+  then
+    wall "${2}"
+  fi
+}
+
+get_default_gateway_interface() {
+  ip route show default 0.0.0.0/0 | awk '/default/ {print $5}'
+}
+
+download_nuvlaedge_installer() {
+  # fetches the latest NuvlaEdge installer script from upstream
+  # $1 is the download URL for the installation script
+  # $2 is the path where to store the installer
+  url="${1}"
+  store_at="${2}"
+  log "Downloading latest NuvlaEdge installer from upstream at ${url}"
+  wget --no-check-certificate "${url}" -O "${store_at}"
+}
+
+install_nuvlaedge() {
+  context="${1}"
+  log "Installing NuvlaEdge Engine"
+  nuvlaedge_installer_url="$(echo ${context} | jq -r .script)"
+
+  nuvlaedge_installer_file="/tmp/nuvlaedge.installer.$(date +'%s')"
+  nuvlaedge_installer_file_gpg="${nuvlaedge_installer_file}.gpg"
+  download_nuvlaedge_installer "${nuvlaedge_installer_url}" "$([ -z "${NB_INSTALLER_SKIP_GPG+x}" ] && echo ${nuvlaedge_installer_file_gpg} || echo ${nuvlaedge_installer_file})"
+
+  if [ $? -ne 0 ]; then
+    log "ERR: unable to download NuvlaEdge installer ${nuvlaedge_installer_url}"
+    exit 1
+  fi
+
+  if [ -z "$NB_INSTALLER_SKIP_GPG" ]; then
+    gpg --batch --keyring "${gpg_pubkey}" --no-default-keyring --verify "${nuvlaedge_installer_file_gpg}"
+    if [ $? -ne 0 ]; then
+      log "ERR: GPG signature verification of ${nuvlaedge_installer_file_gpg} failed"
+      rm -f "${nuvlaedge_installer_file}"
+      exit 1
+    fi
+
+    gpg --batch --keyring "${gpg_pubkey}" --no-default-keyring --output "${nuvlaedge_installer_file}" --decrypt "${nuvlaedge_installer_file_gpg}"
+    if [ $? -ne 0 ]; then
+      log "ERR: GPG file extraction failed"
+      exit 1
+    fi
+  else
+    log "WARN: ignoring GPG signature verification"
+  fi
+
+  chmod +x "${nuvlaedge_installer_file}"
+  log "Launching NuvlaEdge installer ${nuvlaedge_installer_file} ..."
+
+  "${nuvlaedge_installer_file}" --nuvlaedge-installation-trigger-json "${context}" \
+                                --nuvlaedge-installation-dir "${nuvlaedge_local_dir}/installation"
+
+  if [ $? -eq 0 ]
+  then
+    log "NuvlaEdge Engine successfully installed"
+  else
+    log "Failed to install NuvlaEdge with ${context}"
+    exit 1
+  fi
+}
+
+enable_swarm_mode() {
+  swarm_init_args="--cert-expiry 26280h"
+  docker swarm init $swarm_init_args \
+  || docker swarm init $swarm_init_args --advertise-addr "$(get_default_gateway_interface)" \
+  || true
+}
+
+
+log "Install NuvlaEdge Engine"
+
+enable_swarm_mode
+
+nuvlaedge_context=$(cat <<END
+{
+  "name": "${NE_NAME:-NuvlaEdge Cloud OS}",
+  "description": "${NE_DESCRIPTION:-NuvlaEdge Cloud OS autoinstall}",
+  "version": "${NE_VERSION:-2.5.4}",
+  "endpoint": "${NUVLA_ENDPOINT:-https://nuvla.io}",
+  "vpn": "${NUVLA_VPN_IS-infrastructure-service/eb8e09c2-8387-4f6d-86a4-ff5ddf3d07d7}",
+  "script": "${NUVLA_REG:-https://nuvla.io/ui/downloads/nuvlaedge-self-registration.py.gpg}",
+  "apikey": "${NE_API_KEY}",
+  "apisecret": "${NE_API_SECRET}",
+  "environment": {
+    "HOME": "${USER_HOME:-/root}",
+    "SKIP_MINIMUM_REQUIREMENTS": "${NE_SKIP_MIN_REQS:-true}"
+  },
+  "ssh": {
+    "public-keys": [
+      "${NB_SSH_PUBLIC_KEY}"
+    ]
+  },
+  "assets": [
+    ${NB_MODULES:-"${DEF_MODS}"}
+  ]
+}
+END
+)
+
+install_nuvlaedge "${nuvlaedge_context}"
