@@ -3,9 +3,10 @@
 set -e
 
 trigger_file="nuvlabox-installation-trigger-usb.nuvla"
-nuvlabox_local_dir="/opt/nuvlabox"
-gpg_pubkey="${nuvlabox_local_dir}/gpg_pubkey.bin"
-LOG_FILE='/var/log/nuvlabox-installer.log'
+nuvlaedge_local_dir="/opt/nuvlabox"
+gpg_pubkey="${nuvlaedge_local_dir}/gpg_pubkey.bin"
+LOG_FILE='/var/log/nuvlaedge-installer.log'
+DEF_MODS='"docker-compose.yml"'
 
 logger (){
 	date +"%F %T | PID $$ | $0: $*" | tee -a "${LOG_FILE}"
@@ -16,8 +17,8 @@ log() {
   # $1 is the custom log message
   # $2 is a wall message sent to all logged users
 
-  echo "NuvlaBox installer: ${1}"
-  logger "NuvlaBox installer: ${1}"
+  echo "NuvlaEdge installer: ${1}"
+  logger "NuvlaEdge installer: ${1}"
 
   if [ ! -z "${2}" ]
   then
@@ -29,39 +30,39 @@ get_default_gateway_interface() {
   ip route show default 0.0.0.0/0 | awk '/default/ {print $5}'
 }
 
-download_nuvlabox_installer() {
-  # fetches the latest NuvlaBox installer script from upstream
+download_nuvlaedge_installer() {
+  # fetches the latest NuvlaEdge installer script from upstream
   # $1 is the download URL for the installation script
   # $2 is the path where to store the installer
   url="${1}"
   store_at="${2}"
-  log "Downloading latest NuvlaBox installer from upstream at ${url}"
+  log "Downloading latest NuvlaEdge installer from upstream at ${url}"
   wget --no-check-certificate "${url}" -O "${store_at}"
 }
 
-install_nuvlabox() {
+install_nuvlaedge() {
   context="${1}"
-  log "Installing NuvlaBox Engine"
-  nuvlabox_installer_url="$(echo ${context} | jq -r .script)"
+  log "Installing NuvlaEdge Engine"
+  nuvlaedge_installer_url="$(echo ${context} | jq -r .script)"
 
-  nuvlabox_installer_file="/tmp/nuvlabox.installer.$(date +'%s')"
-  nuvlabox_installer_file_gpg="${nuvlabox_installer_file}.gpg"
-  download_nuvlabox_installer "${nuvlabox_installer_url}" "$([ -z "${NB_INSTALLER_SKIP_GPG+x}" ] && echo ${nuvlabox_installer_file_gpg} || echo ${nuvlabox_installer_file})"
+  nuvlaedge_installer_file="/tmp/nuvlaedge.installer.$(date +'%s')"
+  nuvlaedge_installer_file_gpg="${nuvlaedge_installer_file}.gpg"
+  download_nuvlaedge_installer "${nuvlaedge_installer_url}" "$([ -z "${NB_INSTALLER_SKIP_GPG+x}" ] && echo ${nuvlaedge_installer_file_gpg} || echo ${nuvlaedge_installer_file})"
 
   if [ $? -ne 0 ]; then
-    log "ERR: unable to download NuvlaBox installer ${nuvlabox_installer_url}"
+    log "ERR: unable to download NuvlaEdge installer ${nuvlaedge_installer_url}"
     exit 1
   fi
 
   if [ -z "$NB_INSTALLER_SKIP_GPG" ]; then
-    gpg --batch --keyring "${gpg_pubkey}" --no-default-keyring --verify "${nuvlabox_installer_file_gpg}"
+    gpg --batch --keyring "${gpg_pubkey}" --no-default-keyring --verify "${nuvlaedge_installer_file_gpg}"
     if [ $? -ne 0 ]; then
-      log "ERR: GPG signature verification of ${nuvlabox_installer_file_gpg} failed"
-      rm -f "${nuvlabox_installer_file}"
+      log "ERR: GPG signature verification of ${nuvlaedge_installer_file_gpg} failed"
+      rm -f "${nuvlaedge_installer_file}"
       exit 1
     fi
 
-    gpg --batch --keyring "${gpg_pubkey}" --no-default-keyring --output "${nuvlabox_installer_file}" --decrypt "${nuvlabox_installer_file_gpg}"
+    gpg --batch --keyring "${gpg_pubkey}" --no-default-keyring --output "${nuvlaedge_installer_file}" --decrypt "${nuvlaedge_installer_file_gpg}"
     if [ $? -ne 0 ]; then
       log "ERR: GPG file extraction failed"
       exit 1
@@ -70,17 +71,17 @@ install_nuvlabox() {
     log "WARN: ignoring GPG signature verification"
   fi
 
-  chmod +x "${nuvlabox_installer_file}"
-  log "Launching NuvlaBox installer ${nuvlabox_installer_file} ..."
+  chmod +x "${nuvlaedge_installer_file}"
+  log "Launching NuvlaEdge installer ${nuvlaedge_installer_file} ..."
 
-  "${nuvlabox_installer_file}" --nuvlabox-installation-trigger-json "${context}" \
-                               --nuvlabox-installation-dir "${nuvlabox_local_dir}/installation"
+  "${nuvlaedge_installer_file}" --nuvlabox-installation-trigger-json "${context}" \
+                                --nuvlabox-installation-dir "${nuvlaedge_local_dir}/installation"
 
   if [ $? -eq 0 ]
   then
-    log "NuvlaBox Engine successfully installed"
+    log "NuvlaEdge Engine successfully installed"
   else
-    log "Failed to install NuvlaBox with ${context}"
+    log "Failed to install NuvlaEdge with ${context}"
     exit 1
   fi
 }
@@ -93,17 +94,15 @@ enable_swarm_mode() {
 }
 
 
-log "Install NuvlaBox Engine"
-
-log "Install docker-compose"
-pip3 install docker-compose==1.28.6
+log "Install NuvlaEdge Engine"
 
 enable_swarm_mode
 
-nuvlabox_context=$(cat <<END
+DEF_MODS='"docker-compose.yml"'
+nuvlaedge_context=$(cat <<END
 {
-  "name": "${NB_NAME:-NuvlaBox Cloud OS}",
-  "description": "${NB_DESCRIPTION:-NuvlaBox Cloud OS autoinstall}",
+  "name": "${NB_NAME:-NuvlaEdge Cloud OS}",
+  "description": "${NB_DESCRIPTION:-NuvlaEdge Cloud OS autoinstall}",
   "version": "${NB_VERSION:-2.1.1}",
   "endpoint": "https://nuvla.io",
   "vpn": "infrastructure-service/eb8e09c2-8387-4f6d-86a4-ff5ddf3d07d7",
@@ -120,10 +119,10 @@ nuvlabox_context=$(cat <<END
     ]
   },
   "assets": [
-    "docker-compose.yml"
+    ${NB_MODULES:-"${DEF_MODS}"}
   ]
 }
 END
 )
 
-install_nuvlabox "${nuvlabox_context}"
+install_nuvlaedge "${nuvlaedge_context}"
