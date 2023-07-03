@@ -8,9 +8,7 @@ state="${1}"
 if [ "${state}" = "SUCCESS" ]
 then
   echo none > /sys/class/leds/a2_red/trigger
-  echo heartbeat > /sys/class/leds/a2_green/trigger
-  sleep 10
-  echo none > /sys/class/leds/a2_green/trigger
+  echo default-on > /sys/class/leds/a2_green/trigger
 fi
 
 
@@ -18,8 +16,8 @@ if [ "${state}" = "ERROR" ]
 then
   echo heartbeat > /sys/class/leds/a2_red/trigger
   echo none > /sys/class/leds/a2_green/trigger
-  sleep 10
-  echo none > /sys/class/leds/a2_red/trigger
+  sleep 60
+  echo default-on > /sys/class/leds/a2_red/trigger
 fi
 
 
@@ -28,5 +26,5 @@ fi
 if [ "${state}" = "START" ]
 then
   echo none > /sys/class/leds/a2_red/trigger
-  echo default-on > /sys/class/leds/a2_green/trigger
+  echo heartbeat > /sys/class/leds/a2_green/trigger
 fi
